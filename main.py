@@ -2,6 +2,7 @@ from deck import Deck, DeckContainer, TimeIntervalDeckContainers
 from deck_statistics import DeckStatistics
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from inflation_charts import BarChart, LineChart, percent_format
 import requests
 
 BASE_URL = "https://www.masterduelmeta.com/api/v1/top-decks"
@@ -37,7 +38,7 @@ def get_month_with_offset(offset):
     return past.strftime("%Y-%m")
 
 time_interval_containers = []
-for i in range(26):
+for i in range(24):
     start_time = get_month_with_offset(i+1)
     end_time = get_month_with_offset(i)
     print()
@@ -53,13 +54,29 @@ for i in range(26):
         
     containers = categorize_decks(decks)
     sorted_containers = sorted(containers.values(), key=lambda x: x.get_deck_size(), reverse=True)
+    count = 0
     for container in sorted_containers:
-        print(container.name, container.get_deck_size(),
-            container.get_avg_deck_cost(), container.get_avg_deck_without_side_cost())
+        stats = f"Deck Name: {container.name} Deck Submissions: {container.get_deck_size()} " + \
+                f"Avg Cost: {container.get_avg_deck_cost()} URs: {container.get_avg_total_urs()} " + \
+                f"SRs: {container.get_avg_total_srs()} " + \
+                f"N/Rs: {container.get_avg_total_others()}"
+        stats = f"{container.name},{container.get_deck_size()}," + \
+                f"{container.get_avg_deck_cost()},{container.get_avg_total_urs()}," + \
+                f"{container.get_avg_total_srs()}," + \
+                f"{container.get_avg_total_others()}"
+        if count < 10:
+            print(stats)
+            count += 1
         
     time_interval_containers.append(TimeIntervalDeckContainers(start_time, end_time, sorted_containers))
 
 deck_stats = DeckStatistics(time_interval_containers)
-print(deck_stats.get_monthly_inflation())
-print(deck_stats.get_yearly_inflation())
-print(deck_stats.get_total_inflation())
+print("Monthly Inflation", percent_format(deck_stats.get_monthly_inflation()))
+print("Yearly Inflation", percent_format(deck_stats.get_yearly_inflation()))
+
+
+chart = BarChart(deck_stats)
+chart.draw()
+
+chart2 = LineChart(deck_stats)
+chart2.draw()

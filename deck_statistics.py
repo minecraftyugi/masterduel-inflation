@@ -23,3 +23,62 @@ class DeckStatistics:
     
     def get_total_inflation(self):
         return self.time_interval_deck_containers[0].get_avg_cost(self.relevant_decks) / self.time_interval_deck_containers[-1].get_avg_cost(self.relevant_decks)
+    
+    def get_yearly_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 12):
+            rates.append(self.time_interval_deck_containers[i].get_avg_cost(self.relevant_decks) / self.time_interval_deck_containers[i+12].get_avg_cost(self.relevant_decks))
+    
+        return rates
+    
+    def get_yearly_ur_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 12):
+            rates.append(self.time_interval_deck_containers[i].get_avg_total_urs(self.relevant_decks) / self.time_interval_deck_containers[i+12].get_avg_total_urs(self.relevant_decks))
+
+        return rates
+    
+    def get_yearly_sr_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 12):
+            rates.append(self.time_interval_deck_containers[i].get_avg_total_srs(self.relevant_decks) / self.time_interval_deck_containers[i+12].get_avg_total_srs(self.relevant_decks))
+
+        return rates
+    
+    def get_yearly_other_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 12):
+            rates.append(self.time_interval_deck_containers[i].get_avg_total_others(self.relevant_decks) / self.time_interval_deck_containers[i+12].get_avg_total_others(self.relevant_decks))
+
+        return rates
+    
+    def get_monthly_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 1):
+            rates.append(self.time_interval_deck_containers[i].get_avg_cost(self.relevant_decks) / self.time_interval_deck_containers[i+1].get_avg_cost(self.relevant_decks))
+
+        return rates
+    
+    def get_monthly_ur_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 1):
+            rates.append(self.time_interval_deck_containers[i].get_avg_total_urs(self.relevant_decks) / self.time_interval_deck_containers[i+1].get_avg_total_urs(self.relevant_decks))
+
+        return rates
+    
+    def get_monthly_sr_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 1):
+            rates.append(self.time_interval_deck_containers[i].get_avg_total_srs(self.relevant_decks) / self.time_interval_deck_containers[i+1].get_avg_total_srs(self.relevant_decks))
+
+        return rates
+    
+    def get_monthly_other_inflation_rates(self):
+        rates = []
+        for i in range(len(self.time_interval_deck_containers) - 1):
+            rates.append(self.time_interval_deck_containers[i].get_avg_total_others(self.relevant_decks) / self.time_interval_deck_containers[i+1].get_avg_total_others(self.relevant_decks))
+
+        return rates
+    
+    def get_start_dates(self):
+        return [x.get_human_readable_start_date() for x in self.time_interval_deck_containers]
