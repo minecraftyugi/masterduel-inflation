@@ -37,13 +37,7 @@ def get_month_with_offset(offset):
     past = now - relativedelta(months=offset)
     return past.strftime("%Y-%m")
 
-time_interval_containers = []
-for i in range(24):
-    start_time = get_month_with_offset(i+1)
-    end_time = get_month_with_offset(i)
-    print()
-    print(start_time)
-
+def get_time_interval_container(start_time, end_time):
     decks = []
     text = get_data(start_time, end_time)
     for data in text:
@@ -55,11 +49,8 @@ for i in range(24):
     containers = categorize_decks(decks)
     sorted_containers = sorted(containers.values(), key=lambda x: x.get_deck_size(), reverse=True)
     count = 0
+    print("Deck Name,Deck Submissions,Avg Cost,URs,SRs,N/Rs")
     for container in sorted_containers:
-        stats = f"Deck Name: {container.name} Deck Submissions: {container.get_deck_size()} " + \
-                f"Avg Cost: {container.get_avg_deck_cost()} URs: {container.get_avg_total_urs()} " + \
-                f"SRs: {container.get_avg_total_srs()} " + \
-                f"N/Rs: {container.get_avg_total_others()}"
         stats = f"{container.name},{container.get_deck_size()}," + \
                 f"{container.get_avg_deck_cost()},{container.get_avg_total_urs()}," + \
                 f"{container.get_avg_total_srs()}," + \
@@ -68,7 +59,17 @@ for i in range(24):
             print(stats)
             count += 1
         
-    time_interval_containers.append(TimeIntervalDeckContainers(start_time, end_time, sorted_containers))
+    return TimeIntervalDeckContainers(start_time, end_time, sorted_containers)
+
+time_interval_containers = []
+for i in range(24):
+    start_time = get_month_with_offset(i+1)
+    end_time = get_month_with_offset(i)
+    print()
+    print(start_time)
+
+    time_interval_container = get_time_interval_container(start_time, end_time)
+    time_interval_containers.append(time_interval_container)
 
 deck_stats = DeckStatistics(time_interval_containers)
 print("Monthly Inflation", percent_format(deck_stats.get_monthly_inflation()))
@@ -80,3 +81,5 @@ chart.draw()
 
 chart2 = LineChart(deck_stats)
 chart2.draw()
+
+#TODO: average card usage 
